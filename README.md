@@ -74,7 +74,7 @@ https://cdn.jsdelivr.net/gh/<org>/<repo>@<version>/<path-to-asset>
 For this repo:
 
 ```text
-https://cdn.jsdelivr.net/gh/wapka-web/static-cdn-assets@v1.0.0/payui/js/app.js
+https://cdn.jsdelivr.net/gh/wapka-web/static-cdn-assets@v1.0.0/skote/assets/js/app.js
 ```
 
 ### Production (recommended)
@@ -82,9 +82,9 @@ https://cdn.jsdelivr.net/gh/wapka-web/static-cdn-assets@v1.0.0/payui/js/app.js
 Always use a fixed tag such as `@v1.0.0`.
 
 ```html
-<script src="https://cdn.jsdelivr.net/gh/wapka-web/static-cdn-assets@v1.0.0/payui/js/app.js"></script>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/wapka-web/static-cdn-assets@v1.0.0/payui/css/app.css">
-<img src="https://cdn.jsdelivr.net/gh/wapka-web/static-cdn-assets@v1.0.0/payui/images/logo.png" alt="Logo">
+<script src="https://cdn.jsdelivr.net/gh/wapka-web/static-cdn-assets@v1.0.0/skote/assets/js/app.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/wapka-web/static-cdn-assets@v1.0.0/sb-admin/css/styles.css">
+<img src="https://cdn.jsdelivr.net/gh/wapka-web/static-cdn-assets@v1.0.0/payui/images/servers.svg" alt="Logo">
 ```
 
 ### Development or QA
@@ -92,7 +92,7 @@ Always use a fixed tag such as `@v1.0.0`.
 You may use `@main` while testing active changes, but never use it in production.
 
 ```html
-<script src="https://cdn.jsdelivr.net/gh/wapka-web/static-cdn-assets@main/payui/js/app.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/wapka-web/static-cdn-assets@main/skote/assets/js/app.js"></script>
 ```
 
 ## Quick Checklist Before Merging
