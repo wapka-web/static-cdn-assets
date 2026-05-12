@@ -22,8 +22,7 @@ function find(){
 }
 
 function listen(){
-  if(typeEl.tagName==='INPUT'){var o=new MutationObserver(refresh);o.observe(typeEl,{attributes:1,attributeFilter:['value']});}
-  document.addEventListener('change',function(e){if(e.target.id==='typeInput')refresh();});
+  document.addEventListener('change',function(e){if(e.target===typeEl||e.target.id==='typeInput')refresh();});
   editor.addEventListener('keydown',function(e){if(e.key==='?'&&!e.ctrlKey&&!e.metaKey)toggle();});
 }
 
