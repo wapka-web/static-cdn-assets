@@ -3,8 +3,8 @@ var D={
 types:{
  0:{n:'Code',c:'Page Logic',q:'Raw HTML, CSS, or JS output. No tag processing. Whatever you write is sent directly to the browser.',e:'The simplest code type. Use for static content, embedded styles/scripts, or third-party embed codes. No tag processing occurs.',p:{},v:{}},
  1:{n:'TAG Code',c:'Page Logic',q:'Dynamic content using {{TAG()}} macros. Chain functions with @. 50 built-in functions for data, math, and conditions.',e:'Write TAG macros inside double braces. Chain functions with @. Supports {{VAR}}, {{GET}}, {{POST}}, {{IFSET}}/{{ELSE}}/{{END}} conditions, math operations, and storage. See the Tags tab for the full reference.',p:{},v:{}},
- 2:{n:'Youtube API',c:'Content',q:'Display YouTube video and channel data.',e:'Fetches YouTube video/channel information and displays it using templates.',p:{id:'Video or channel ID. Multiple IDs: id=one,two,three',category:'Get videos from defined category',type:'VIDEO (default), RELATED (related videos), TRENDING, or CHANNEL',maxresults:'Display limit (max 50)',pagetoken:'Page token',order:'relevance, date, rating, title, videoCount, viewCount'},v:{}},
- 3:{n:'Auto Redirect',c:'Page Logic',q:'Redirect visitors to another URL. Stops all further execution.',e:'When this code runs, it immediately sends a redirect header and exits. No other codes or page content will be processed.',p:{url:'Target URL (can use TAG macros)'},v:{}},
+ 2:{n:'Youtube API',c:'Content',q:'Display YouTube video and channel data.',e:'Fetches YouTube video/channel info using the YouTube Data API. Requires an API key.',p:{id:'Video/channel ID. Multiple: id=one,two,three',category:'Get videos from defined category',type:'VIDEO (default), RELATED, TRENDING, or CHANNEL',maxresults:'Display limit (max 50)',pagetoken:'Page token for pagination',order:'relevance, date, rating, title, videoCount, viewCount',regioncode:'Country code (e.g. US, IN, BD)',search:'Search videos by keyword',apikey:'YouTube Data API key'},v:{'%videoid%, %channelid%':'Video or channel ID','%title%, %channeltitle%':'Video or channel title','%description%':'Video/channel description','%publishedAt%':'Published date','%thumb%':'Thumbnail URL','%tags%':'Video tags','%category%':'Category name','%duration%, %dimension%, %definition%':'Video metadata','%viewCount%, %likeCount%, %dislikeCount%, %favoriteCount%, %commentCount%, %subscriberCount%, %videoCount%':'Statistics','%nextPageToken%, %prevPageToken%':'Pagination tokens','%error%':'Error message from YouTube','%count%':'Videos shown','%total%':'Total videos','%pagenum%':'Total pages'}},
+ 3:{n:'Auto Redirect',c:'Page Logic',q:'Redirect visitors to another URL. Stops all further execution.',e:'Sends an HTTP redirect and exits immediately. No other codes or page content will be processed after this. Use with rules to conditionally redirect.',p:{type:'301 (permanent) or 302 (temporary, default)'},v:{}},
  4:{n:'Head Tags',c:'Page Logic',q:'Inject meta tags, CSS, or JS into <head>.',e:'Content goes into HTML <head> instead of body. Use for meta tags, Open Graph, analytics, or CSS that must load before content.',p:{append:'Append to existing head tags'},v:{}},
  5:{n:'File Viewer',c:'Content',q:'Display or stream a file from any Wapka site or account.',e:'Shows a file by its ID. Can display inline or force download.',p:{},v:{}},
  6:{n:'Online User',c:'Users',q:'Show currently active visitors with details.',e:'Lists visitors browsing the site. Filter by user or page.',p:{'ID, ID_NOT':'Set USERID=0 for guests only or ID_NOT=0 for logged users only','PAGEID, PAGEID_NOT':'Filter by page','PAGE':'Page number','ORDER':'NEW or OLD','LIMIT':'Items per page (max 30, default 20)','URL':'Required for pagination'},v:{'%userid%':'User ID','%username%':'Username','%date%':'Last active time','%browser%':'Browser name','%os%':'Device OS','%useragent%':'HTTP user agent','%avatar%':'Profile picture','%point%':'Credit points','%var(name)%':'Extra saved data','%pageid%':'Current page ID','%pagename%':'Page name','%location%':'Full URL (admin only)','%country%':'Country from IP','%ip%':'IP address','%role%':'User role','%count%':'Users shown','%pagenum%':'Total pages','%total%':'Total users','#%PAGING(%first% %prev% %num% %next% %last%)%#':'Pagination'}},
@@ -183,7 +183,110 @@ function buildIndex(){
 }
 window._wkhShowType=function(tid){typeEl.value=tid;typeEl.dispatchEvent(new Event('change',{bubbles:1}));refresh();showTab('quick');};
 
-function buildLuaTab(){document.getElementById('wkh-lua-body').innerHTML='<div class="wkh-desc">'+esc(D.lua||'')+'</div>';}
+function buildLuaTab(){
+  var h='<div class="wkh-desc">'+esc(D.lua||'')+'</div>';
+  var libs=[
+    {g:'Output',i:[
+      {n:'print("text")',d:'Output text to page'},
+      {n:'dump(val)',d:'Debug: dump value to output'},
+      {n:'server.send(data)',d:'Send raw output'},
+      {n:'server.template("404")',d:'Serve static file or error page'}
+    ]},
+    {g:'Request Info',i:[
+      {n:'req.method',d:'HTTP method (GET/POST)'},
+      {n:'req.uri',d:'Request path'},
+      {n:'req.get.key',d:'URL query parameter'},
+      {n:'req.post.key',d:'Form field value'},
+      {n:'req.headers',d:'Request headers table'},
+      {n:'env.siteid',d:'Current site ID'},
+      {n:'env.sitename',d:'Current site name'},
+      {n:'env.remote_ip',d:'Visitor IP address'},
+      {n:'env.is_user',d:'Is logged in? (bool)'},
+      {n:'env.is_admin',d:'Is site admin? (bool)'}
+    ]},
+    {g:'Server Control',i:[
+      {n:'server.header(name,val)',d:'Set HTTP header'},
+      {n:'server.terminate()',d:'Stop all execution'},
+      {n:'server.delay(ms)',d:'Pause in milliseconds'},
+      {n:'server.time()',d:'Current UNIX timestamp'},
+      {n:'server.date(fmt)',d:'Formatted date'},
+      {n:'server.timezone(tz)',d:'Get/set timezone'}
+    ]},
+    {g:'URL & Routing',i:[
+      {n:'url.redirect("/")',d:'HTTP redirect'},
+      {n:'url.rewrite("^/x/(.+)$",cb)',d:'Regex URL rewrite'},
+      {n:'url.map("blog/*","page")',d:'Wildcard URL mapping'},
+      {n:'url.encode(str)',d:'URL-encode text'},
+      {n:'url.decode(str)',d:'URL-decode text'},
+      {n:'url.parse(url)',d:'Parse URL into parts'},
+      {n:'url.slug(str)',d:'Convert to URL-safe slug'}
+    ]},
+    {g:'Encoder/Decoder',i:[
+      {n:'encoder.json(t)',d:'Value → JSON string'},
+      {n:'decoder.json(s)',d:'JSON string → value'},
+      {n:'encoder.base64(t)',d:'Encode to base64'},
+      {n:'decoder.base64(s)',d:'Decode from base64'},
+      {n:'encoder.url(t)',d:'URL-encode'},
+      {n:'decoder.url(s)',d:'URL-decode'}
+    ]},
+    {g:'Hash',i:[
+      {n:'hash.md5(d)',d:'MD5 hash'},
+      {n:'hash.sha1(d)',d:'SHA-1 hash'},
+      {n:'hash.sha256(d)',d:'SHA-256 hash'},
+      {n:'hash.sha512(d)',d:'SHA-512 hash'},
+      {n:'hash.crc32(d)',d:'CRC32 checksum'}
+    ]},
+    {g:'HTML Helpers',i:[
+      {n:'html.title(t)',d:'Set page <title>'},
+      {n:'html.headtag(h)',d:'Add to <head>'},
+      {n:'html.escape(t)',d:'Escape HTML entities'},
+      {n:'html.unescape(t)',d:'Decode HTML entities'},
+      {n:'html.strip_tags(t)',d:'Remove HTML tags'},
+      {n:'html.render_tag(tpl)',d:'Render Wapka tags (%var%)'},
+      {n:'html.render_bbcode(c)',d:'BBCode → HTML'},
+      {n:'html.paging(tag,cfg)',d:'Pagination HTML'},
+      {n:'html.doctype()',d:'Return <!DOCTYPE html>'}
+    ]},
+    {g:'API — Users',i:[
+      {n:'api.user_create({...})',d:'Create new user'},
+      {n:'api.user_info({id:N})',d:'Get user by ID'},
+      {n:'api.user_login({...})',d:'Log in a user'},
+      {n:'api.user_online({...})',d:'List online users'},
+      {n:'api.user_edit({id:N,set:{...}})',d:'Edit user'}
+    ]},
+    {g:'API — Content',i:[
+      {n:'api.message_create({...})',d:'Send message'},
+      {n:'api.message_info({...})',d:'List messages'},
+      {n:'api.forum_create({...})',d:'Create forum'},
+      {n:'api.forum_info({...})',d:'List forums'},
+      {n:'api.post_create({...})',d:'Create post'},
+      {n:'api.post_info({...})',d:'List posts'},
+      {n:'api.folder_create({...})',d:'Create folder'},
+      {n:'api.file_create({...})',d:'Upload file'}
+    ]},
+    {g:'API — Data',i:[
+      {n:'api.data_create({c:"x",data:{...}})',d:'Insert document'},
+      {n:'api.data_find({c:"x",...})',d:'Query documents'},
+      {n:'api.data_get({c:"x",id:N})',d:'Get document'},
+      {n:'api.data_update({c:"x",id:N,data:{...}})',d:'Update document'},
+      {n:'api.data_delete({c:"x",id:N})',d:'Soft-delete document'},
+      {n:'api.data_collections()',d:'List collections'}
+    ]},
+    {g:'Other',i:[
+      {n:'include("pagename")',d:'Render another page'},
+      {n:'getcode(id)',d:'Fetch Lua code by ID'},
+      {n:'loadstring(code)',d:'Execute Lua code string'},
+      {n:'proxy.pass(url)',d:'Reverse proxy request'},
+      {n:'os.exit = server.error',d:'Exit replaced with server error'}
+    ]}
+  ];
+  for(var i=0;i<libs.length;i++){var l=libs[i];
+    h+='<div class="wkh-sec"><div class="wkh-sh">'+esc(l.g)+'</div>';
+    for(var j=0;j<l.i.length;j++)h+='<div class="wkh-row"><span class="wkh-k">'+esc(l.i[j].k)+'</span><span class="wkh-v">'+esc(l.i[j].d)+'</span></div>';
+    h+='</div>';
+  }
+  document.getElementById('wkh-lua-body').innerHTML=h;
+}
 
 function showTab(name){
   document.querySelectorAll('#wkh-tabs button').forEach(function(b){b.classList.toggle('active',b.dataset.tab===name);});
