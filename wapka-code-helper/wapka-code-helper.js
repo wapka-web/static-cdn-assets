@@ -1,5 +1,18 @@
 (function(){
-var D=window.__WKH_DATA;if(!D)return setTimeout(arguments.callee,50);
+// Auto-load language data from same directory
+var s=document.currentScript||document.querySelector('script[src*="wapka-code-helper.js"]');
+var base='';if(s&&s.src){base=s.src.replace(/[^\/]+$/,'');}
+var lang=(s&&s.dataset.lang)||localStorage['wkh-lang']||(navigator.language||'en').slice(0,2);
+var langs=['en','hi','ar','id','ur','bn'];
+if(langs.indexOf(lang)<0)lang='en';
+
+if(!window.__WKH_DATA){
+  var dl=document.createElement('script');dl.src=base+'data/'+lang+'.js';
+  dl.onerror=function(){var f=document.createElement('script');f.src=base+'data/en.js';document.head.appendChild(f);};
+  document.head.appendChild(dl);
+}
+
+function boot(){
 var typeEl=null,editor=null,panel=null,open=false,curTab='quick';
 
 function find(){
@@ -104,4 +117,7 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape'&&open)toggle
 
 if(!find())return document.addEventListener('DOMContentLoaded',function(){if(find()){inject();listen();}});
 inject();listen();
+}
+
+if(window.__WKH_DATA)boot();else document.addEventListener('wkh-ready',boot);
 })();

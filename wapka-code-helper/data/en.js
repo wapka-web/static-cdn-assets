@@ -1,3 +1,4 @@
+(function(){
 window.__WKH_DATA = {
   types: {
     0:  {n:'Code',             d:'Raw HTML, CSS, or JS. Output as-is. No tag processing.',           t:'<!-- Your HTML here -->'},
@@ -87,3 +88,5 @@ window.__WKH_DATA = {
   },
   luaNote: 'Lua scripting (type 29) gives you full server-side control — variables, loops, HTTP headers, database access, and URL routing. See the Lua Reference for the complete API.'
 };
+document.dispatchEvent(new Event('wkh-ready'));
+})();
