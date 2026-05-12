@@ -13,6 +13,7 @@ if(!window.__WKH_DATA){
 }
 
 function boot(){
+var D=window.__WKH_DATA;if(!D)return;
 var typeEl=null,editor=null,panel=null,open=false,curTab='quick';
 
 function find(){
@@ -41,7 +42,7 @@ function inject(){
   var b=document.createElement('button');b.id='wkh-toggle';b.textContent='?';b.title='Code Helper (press ?)';
   b.onclick=function(e){e.stopPropagation();toggle();};document.body.appendChild(b);
   var p=document.createElement('div');p.id='wkh-panel';p.innerHTML=
-    '<div id="wkh-header"><span id="wkh-type-name">Code Helper</span><button id="wkh-close" onclick="document.getElementById(\'wkh-panel\').classList.remove(\'open\');document.getElementById(\'wkh-toggle\').style.display=\'\';open=false">&times;</button></div>'+
+    '<div id="wkh-header"><span id="wkh-type-name">Code Helper</span><button id="wkh-close" onclick="window._wkhClose()">&times;</button></div>'+
     '<div id="wkh-tabs">'+
       '<button data-tab="quick" class="active" onclick="window._wkhShowTab(\'quick\')">Quick</button>'+
       '<button data-tab="tags" id="wkh-tab-tags" style="display:none" onclick="window._wkhShowTab(\'tags\')">Tags</button>'+
@@ -54,6 +55,12 @@ function inject(){
   buildTagList();
   refresh();
 }
+
+window._wkhClose=function(){
+  var p=document.getElementById('wkh-panel');if(p)p.classList.remove('open');
+  var t=document.getElementById('wkh-toggle');if(t)t.style.display='';
+  open=false;
+};
 
 function buildTagList(){
   var pane=document.getElementById('wkh-pane-tags'),tags=D.tags;
