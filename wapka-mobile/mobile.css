@@ -162,6 +162,7 @@ a:link {
   overflow: hidden;
 }
 .cf-turnstile iframe {
+  width: 250px !important;
   max-width: 100% !important;
 }
 
