@@ -1,0 +1,168 @@
+/* ========================================
+   Wapka Mobile Lite — Legacy WAP Style
+   Consolidated from codebase wapka_mobile
+   ======================================== */
+
+body {
+  text-align: center;
+  background-color: #cef;
+}
+a:link {
+  text-decoration: none;
+}
+
+/* ── Form elements ────────────────────── */
+.textbox {
+  width: 95%;
+  height: 25px;
+  margin: 5px;
+  font-size: medium;
+}
+.select {
+  height: 25px;
+  margin: 5px;
+  font-size: medium;
+}
+.button {
+  margin: 5px;
+  height: 25px;
+  font-size: medium;
+}
+.textarea {
+  background: #fff;
+  width: 80%;
+  border: 1px solid #0af;
+  margin: 2px;
+  height: 100px;
+}
+.label {
+  padding-left: 3px;
+  font-size: small;
+}
+
+/* ── Layout blocks ────────────────────── */
+.blok {
+  text-align: left;
+  border: 1px solid #69f;
+  background-color: #fff;
+  margin: 2px 2px;
+  padding: 3px;
+}
+.bar1 {
+  text-align: left;
+  border: 1px solid #69f;
+  background-color: #fff;
+  padding-bottom: 0;
+  margin-bottom: 5px;
+}
+.bar1top {
+  background-color: #69f;
+  text-align: center;
+  padding-top: 3px;
+  padding-bottom: 3px;
+}
+.bar11 {
+  text-align: left;
+  padding: 4px;
+  font-weight: 700;
+}
+.bar12 {
+  text-align: left;
+  padding: 4px;
+  font-weight: 700;
+  background-color: #eee;
+}
+.bar13 {
+  text-align: left;
+  padding: 10px;
+}
+.bar14 {
+  text-align: left;
+  padding: 10px;
+  background-color: #eee;
+}
+.footer {
+  text-align: center;
+  font-size: 12px;
+  margin-top: 10px;
+  line-height: 150%;
+}
+
+/* ── Status / Notification ────────────── */
+.info {
+  border: 1px solid #f93;
+  padding: 2px;
+  background-color: #ffc;
+}
+.error {
+  background-color: red;
+  font-weight: 700;
+}
+
+/* ── Background helpers ───────────────── */
+.bg1 { background-color: #ccc; }
+.bg2 { background-color: #fff; }
+.bg3 { background-color: red; text-align: left; }
+
+/* ── FAQ ───────────────────────────────── */
+.faq_list_block {
+  margin: 2px 2px 5px 2px;
+  border: 1px solid #00f;
+  padding: 2px;
+}
+.faq_list_name {
+  border-bottom: 1px solid #9cf;
+  padding: 1px;
+  text-align: left;
+  background-color: #cdf;
+  font-weight: 700;
+}
+.faq_list_details {
+  text-align: left;
+  font-size: small;
+  color: #667;
+  padding: 4px;
+}
+
+/* ── Pagination ───────────────────────── */
+.pagination {
+  margin: 0 0;
+  padding: 10px 10px;
+  text-align: center;
+  display: block;
+  background: #fff;
+  border-top: 1px solid #111;
+  border-bottom: 1px solid #111;
+}
+.pagination span {
+  text-align: center;
+  padding: 3px;
+  margin: 2px;
+}
+.pagination a {
+  text-align: center;
+  background: #6699FF;
+  border-radius: 5px 5px;
+  color: #fff;
+  padding: 8px;
+  margin: 2px;
+}
+.pagination a:hover {
+  text-align: center;
+  background: red;
+  border-radius: 5px 5px;
+  color: #fff;
+  padding: 8px;
+  margin: 2px;
+}
+
+/* ── Tables ───────────────────────────── */
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+th, td {
+  padding: 8px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
