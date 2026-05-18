@@ -156,6 +156,15 @@ a:link {
   margin: 2px;
 }
 
+/* ── Turnstile Captcha ───────────────── */
+.cf-turnstile {
+  max-width: 100%;
+  overflow: hidden;
+}
+.cf-turnstile iframe {
+  max-width: 100% !important;
+}
+
 /* ── Tables ───────────────────────────── */
 table {
   border-collapse: collapse;
